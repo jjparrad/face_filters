@@ -8,39 +8,57 @@ Dependencies : - OpenCV
 
 """
 
+import os
+import cv2
+import numpy as np
+import kagglehub
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers, models
+from sklearn.model_selection import train_test_split
+
+path = kagglehub.dataset_download("jessicali9530/lfw-dataset")
+
+image_size = 64
+images = []
+
+for root, dirs, files in os.walk(path):
+    for file in files:
+        if file.endswith(".jpg"):
+            img_path = os.path.join(root, file)
+            img = cv2.imread(img_path)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = cv2.resize(img, (image_size, image_size))
+            img = img.astype("float32") / 255.0
+            images.append(img)
+
+images = np.array(images)
+print("Shape final del dataset:", images.shape)
 
 
-# Load data TODO: only for testing purposes we are using the CIFAR10 dataset. Later it should be replaced by a proper face dataset (CelebA maybe).
-(x_train, y_train), (x_test, y_test) = keras.datasets.cifar10.load_data()
-
-x_train = x_train.astype("float32") / 255.0
-x_test = x_test.astype("float32") / 255.0
+x_train, x_test = train_test_split(images, test_size=0.2, random_state=42)
 
 print("Shape de entrenamiento:", x_train.shape)
 print("Shape de prueba:", x_test.shape)
 
 # Create encoder and decoder
 encoder = keras.models.Sequential([
-    keras.layers.Input((32, 32, 3)),
-    keras.layers.Conv2D(32, (3,3), activation='relu', padding='same'),
-    keras.layers.MaxPooling2D((2,2), padding='same'),
-    keras.layers.Conv2D(16, (3,3), activation='relu', padding='same'),
-    keras.layers.MaxPooling2D((2,2), padding='same')
+    keras.layers.Input((64, 64, 3)),
+    keras.layers.Conv2D(32, (3,3), activation='relu', padding='same', strides=2),
+    keras.layers.Conv2D(64, (3,3), activation='relu', padding='same', strides=2),
+    keras.layers.Conv2D(128, (3,3), activation='relu', padding='same', strides=2)
 ])
 
 decoder = keras.models.Sequential([
-    keras.layers.Conv2DTranspose(16, (3,3), strides=2, activation='relu', padding='same'),
-    keras.layers.Conv2DTranspose(32, (3,3), strides=2, activation='relu', padding='same'),
-    keras.layers.Conv2D(3, (3,3), activation='sigmoid', padding='same')  # reconstrucción final
+    keras.layers.Conv2DTranspose(128, (3,3), activation='relu', padding='same', strides=2),
+    keras.layers.Conv2DTranspose(64, (3,3), activation='relu', padding='same', strides=2),
+    keras.layers.Conv2DTranspose(32, (3,3), activation='relu', padding='same', strides=2),
+    keras.layers.Conv2D(3, (3,3), activation='sigmoid', padding='same')  # salida RGB
 ])
 
 autoencoder = keras.models.Sequential([encoder, decoder])
+autoencoder.compile(optimizer='adam', loss='mse')
 autoencoder.summary()
 
-autoencoder.compile(optimizer='adam', loss='mse')
 
 # Train the autoencoder
 epochs = 10
