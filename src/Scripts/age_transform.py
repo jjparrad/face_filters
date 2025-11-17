@@ -48,13 +48,13 @@ for root, dirs, files in os.walk(path):
 
 
 images = np.array(images)
-print("Shape final del dataset:", images.shape)
+print("Dataset final shape:", images.shape)
 
 
 x_train, x_test = train_test_split(images, test_size=0.2, random_state=42)
 
-print("Shape de entrenamiento:", x_train.shape)
-print("Shape de prueba:", x_test.shape)
+print("Training shape:", x_train.shape)
+print("Test shape:", x_test.shape)
 
 # Create encoder and decoder
 encoder = keras.models.Sequential([
@@ -66,14 +66,7 @@ encoder = keras.models.Sequential([
     keras.layers.Dense(256, activation='relu'), # I think that if we change the image size we have to change this value
     keras.layers.Dense(latent_dim * 2)
 ], name="encoder")
-
 encoder.summary()
-
-def sample_latent(z):
-    z_mean, z_log_var = tf.split(z, num_or_size_splits=2, axis=1)
-    epsilon = tf.random.normal(shape=tf.shape(z_mean))
-    z = z_mean + tf.exp(0.5 * z_log_var) * epsilon
-    return z, z_mean, z_log_var
 
 decoder = keras.models.Sequential([
     keras.layers.Input((latent_dim,)),
@@ -83,8 +76,14 @@ decoder = keras.models.Sequential([
     keras.layers.Conv2DTranspose(64, (3,3), activation='relu', padding='same', strides=2),
     keras.layers.Conv2DTranspose(32, (3,3), activation='relu', padding='same', strides=2),
     keras.layers.Conv2D(3, (3,3), activation='sigmoid', padding='same')
-])
+], name="decoder")
 decoder.summary()
+
+def sample_latent(z):
+    z_mean, z_log_var = tf.split(z, num_or_size_splits=2, axis=1)
+    epsilon = tf.random.normal(shape=tf.shape(z_mean))
+    z = z_mean + tf.exp(0.5 * z_log_var) * epsilon
+    return z, z_mean, z_log_var
 
 class VAE(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
