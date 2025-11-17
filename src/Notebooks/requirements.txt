@@ -1,5 +1,6 @@
 kagglehub
-tensorflow
+tensorflow[and-cuda]
 opencv-python
 numpy
 scikit-learn
+matplotlib
