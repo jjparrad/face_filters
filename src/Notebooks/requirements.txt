@@ -1,6 +1,6 @@
 kagglehub
 numpy==1.26.4
-tensorflow[and-cuda]
+tensorflow[and-cuda]==2.20.0
 opencv-python
 scikit-learn
 matplotlib
