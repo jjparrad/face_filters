@@ -4,3 +4,4 @@ tensorflow[and-cuda]==2.20.0
 opencv-python
 scikit-learn
 matplotlib
+keras-facenet
