@@ -1,0 +1,23 @@
+# Deep Learning
+torch>=1.7.0
+torchvision>=0.8.0
+
+# Build tools (required for StyleGAN2 CUDA ops)
+ninja
+
+# Image processing
+Pillow>=8.0.0
+opencv-python>=4.0.0
+dlib>=19.0.0
+imageio>=2.9.0
+
+# Scientific computing
+numpy>=1.19.0
+scipy>=1.5.0
+
+# Visualization & progress
+matplotlib>=3.3.0
+tqdm>=4.50.0
+
+# Training & logging
+tensorboard>=2.4.0

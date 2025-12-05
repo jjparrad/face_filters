@@ -2,3 +2,7 @@
 src/Models/Temp/
 src/Images/
 src/Notebooks/images_processed.npy
+
+SAM/pretrained_models
+SAM/shape_predictor_68_face_landmarks.dat
+SAM/.venv/
