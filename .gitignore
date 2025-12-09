@@ -1,4 +1,5 @@
 .venv/
 src/Models/Temp/
 src/Images/
+src/Models
 src/Notebooks/images_processed.npy
