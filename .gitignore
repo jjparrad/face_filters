@@ -3,3 +3,4 @@ src/Models/Temp/
 src/Images/
 src/Models
 src/Notebooks/images_processed.npy
+SAM/pretrained_models/sam_ffhq_aging.pt
